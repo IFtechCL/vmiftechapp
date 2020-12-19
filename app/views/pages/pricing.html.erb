@@ -1,0 +1,175 @@
+<% title "Pricing" %>
+<% content_for :head do %>
+  <style>
+    footer{
+      margin-top: 0px;
+    }
+    .nodis,.dis{
+      display: none;
+    }
+    .btn.sizes .prices.text{
+      padding-top:20px;
+      padding-bottom: 20px;
+      min-height: 110px;
+    }
+    .months.active,.months:hover,.months:focus{
+      background-color:#3190e7;
+    }
+  </style>
+  <script>
+    $(document).ready(function(){
+      $("label.onemonth").on("click", function(){
+        $("div.prices").hide();
+        $("div.nodis").show();
+      });
+      $("label.threemonth").on("click", function(){
+        $("div.prices").hide();
+        $("div.dis").show();
+      });
+      $("label.sixmonth").on("click", function(){
+        $("div.prices").hide();
+        $("div.maxdis").show();
+      });
+      $("label.months").on("click",function(){
+        $("label.months").removeClass("active");
+        $(this).addClass("active");
+      });
+    });
+  </script>
+<% end %>
+<div class="muhcontainer" style="color: #666">
+  <div class="row feature-box">
+      <div class="col-md-12">
+          <h1 style="font-family: 'quicksandlight' ">Reasonable Pricing Structure</h1>
+          <h4>Each Plan comes with Solid State Drives and availablity around the globe.</h4>
+      </div>
+  </div>
+  <div class="container feature-box" style="margin-top:20px;">
+    <div class="btn-group" data-toggle="buttons">
+      <label class="btn btn-primary months onemonth">
+        1 Month
+      </label>
+      <label class="btn btn-primary months sixmonth active">
+        6 Months
+      </label>
+      <label class="btn btn-primary months threemonth">
+        3 Months
+      </label>
+    </div>
+  </div>
+  <div class="container feature-box" style="margin-top:0px;">
+    <div class="btn instsize">
+      <br>
+      <div class="btn sizes">
+        <div class="nodis prices text">
+          <h3><sup>$</sup>6/Month</h3>
+        </div>
+        <div class="dis prices text">
+          <h4><sup>$</sup>3.99/First Month</h4>
+          <h5><sup>$</sup>6/Thereafter</h5>
+        </div>
+        <div class="maxdis prices text">
+          <h4><sup>$</sup>1.99/First Month</h4>
+          <h5><sup>$</sup>6/Thereafter</h5>
+        </div>
+        <div class="specs">
+          <ul>
+            <li><span>512 MB</span> RAM</li>
+            <li><span>Single</span> Core CPU</li>
+            <li><span>20 GB SSD</span> Disk</li>
+            <li><span>1000 GB</span> Bandwidth</li>
+          </ul>
+        </div>
+      </div><!--
+   --><div class="btn active sizes">
+        <div class="nodis prices text">
+         <h3><sup>$</sup>11/Month</h3>
+        </div>
+        <div class="dis prices text">
+         <h4><sup>$</sup>6.99/First Month</h4>
+         <h5><sup>$</sup>11/Thereafter</h5>
+        </div>
+        <div class="maxdis prices text">
+         <h4><sup>$</sup>4.99/First Month</h4>
+         <h5><sup>$</sup>11/Thereafter</h5>
+        </div>
+        <div class="popular">
+          MOST POPULAR PLAN
+        </div>
+        <div class="specs">
+          <ul>
+            <li><span>1 GB</span> RAM</li>
+            <li><span>Single</span> Core CPU</li>
+            <li><span>30 GB SSD</span> Disk</li>
+            <li><span>2000 GB</span> Bandwidth</li>
+          </ul>
+        </div>
+      </div><!--
+   --><div class="btn sizes">
+        <div class="nodis prices text">
+          <h3><sup>$</sup>22/Month</h3>
+        </div>
+        <div class="dis prices text">
+          <h4><sup>$</sup>13.99/First Month</h4>
+          <h5><sup>$</sup>22/Thereafter</h5>
+        </div>
+        <div class="maxdis prices text">
+          <h4><sup>$</sup>11.99/First Month</h4>
+          <h5><sup>$</sup>22/Thereafter</h5>
+        </div>
+        <div class="specs">
+          <ul>
+            <li><span>2 GB</span> RAM</li>
+            <li><span>Dual</span> Core CPU</li>
+            <li><span>40 GB SSD</span> Disk</li>
+            <li><span>3000 GB</span> Bandwidth</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <br>
+    <a href="/register" class="btn btn-primary bluebutton" style="width: 25%" role="button">Register Now</a>
+  </div>
+</div>
+<div class="wrapper" style="border-bottom: 0;margin-top:25px;">
+  <div class="row feature-box" style="margin-top:0px;">
+    <div class="col-md-12">
+      <h1 style="font-family: 'quicksandlight' ">Need More?</h1>
+      <h3 style="padding:10px;line-height: 200%;">We do offer solutions for individuals/organization in need of greater resources.
+        <br>
+        Get in touch with us to discuss further.
+      </h3>
+      <div class="container contact-us">
+       <a href="/contact" class="btn btn-primary bluebutton" style="width: 25%;margin-top:0" role="button">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="wrapper">
+  <div class="faqs feature-box container">
+    <h1 style="font-family: 'quicksandlight';">FAQS On Pricing and Billing</h1>
+    <div class="faq">
+      <div class="row">
+        <div class="col-md-6">
+          <h5>What form of Payments do we Accept?</h5>
+          <p>We currently accept payments via PayPal which support hundreds of countries around the world.</p>
+        </div>
+        <div class="col-md-6">
+          <h5>I completed payment but it still shows "Awaiting Payment Confirmation" on Instance Dashboard?</h5>
+          <p>It takes few minutes for Paypal to completely process an transaction and notify us. Instance status should be updated within seconds of receiving notification from Paypal of completed payment.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <h5>How do I cancel my account?</h5>
+          <p>You can cancel your account by sending an e-mail to support@lideploy.com or by opening a support ticket stating that you want to delete your account.Do note that this process is irreversible.</p>
+        </div>
+        <div class="col-md-6">
+          <h5>Do you offer refund?</h5>
+          <p>We currently do not offer refund, but should you have any problem with our services we will be happy to assist you if you just email us at support@lideploy.com or open a support ticket.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%= render 'shared/footer' %>

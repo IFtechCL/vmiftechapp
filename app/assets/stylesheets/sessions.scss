@@ -1,0 +1,32 @@
+// Place all the styles related to the Sessions controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+.new_user{
+    margin: 60px auto 0px auto;
+    width: 400px;
+    padding: 40px;
+    padding-top:0px !important;
+    padding-bottom: 0px !important;
+    border-radius: 3px;
+    background: #3190e7;
+}
+.etos{
+  font-size:12px;
+  font-family: 'quicksandbold';
+  text-align: center;
+  margin: 0 auto;
+  color: #34495E;
+  margin-bottom: 25px;
+  a{
+    text-decoration:none;
+    border: none;
+    color:#34495E;
+    border-bottom: 1px dotted #34495e;
+  }
+}
+.notify-alert,.notify-icon{
+  background-color: #3190e7 !important;
+  span{
+    font-family: 'quicksandbold' !important;
+  }
+}

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>500 - LiDeploy</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="shortcut icon" type="image/png" href="/Lideployfavicon.png">
+  <link href="https://fonts.googleapis.com/css?family=Oswald:300" rel="stylesheet">
+  <style>
+  body {
+    background-color: #f06061;
+    text-align: center;
+    font-family: arial, sans-serif;
+    margin: 0;
+  }
+  div.img{
+    width: 600px;
+    height: 235px;
+    background-image: url("/50x.png");
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    margin-top: -117px; /* Half the height */
+    margin-left: -300px; 
+  }
+  div.text{
+    position: absolute;
+    top: 40%;
+    left:0.3%;
+    width: 99%;
+    margin-top:-50px;
+    color:white;
+    font-family:'Oswald',sans-serif;
+    font-size:27px;
+  }
+  div.buttons{
+    margin-top: 117px;
+  }
+  div.buttons a{
+    display: inline-block;
+    width: 5em;
+    color: #ffebee;
+    font-size: 1.2em;
+    letter-spacing: 2px;
+    text-decoration: none;
+    padding:0.5em;
+    margin:0 1em;
+    border:1px solid #ffebee;
+    transition: all 0.7s ease;
+  }
+  div.buttons a:hover{
+    color: black;
+    color: black;
+    border-color: black;
+  }
+  div.header{
+    top:2.5%;
+    left:0.8%;
+    letter-spacing: 5px;
+    margin-top:0;
+    font-size:3em;
+    z-index: 1050;
+  }
+  .header h3{
+    margin-top: 0;
+  }
+  .header a{
+    color: black;
+    text-decoration: none;
+    transition: all 0.7s ease;
+  }
+  .header a:hover{
+    color: #ffebee;
+  }
+  .error{
+    margin-bottom: 0;
+  }
+  .main-error{
+    margin-top:-150px !important;
+  </style>
+</head>
+
+<body>
+  <!-- This file lives in public/404.html 
+  <div class="dialog">
+    <div>
+      <h1>404</h1>
+      <h4>Page Not Found</h4>
+      <h3>It seems you're lost</h3>
+    </div>
+  </div>
+  -->
+  <div class="text header"><h3><a href="/" class="btn">LiDeploy</a></h3></div>
+  <div class="img"></div>
+  <div class="main-error text">
+    <h1 class="error">
+      Something's Wrong
+    </h1> 
+    <h3>
+      Experienced monkeys should be fixing the issue soon.
+    </h3>
+  </div>
+  <div class="text buttons">
+    <a href="/" class="btn">Homepage</a>
+    <a href="/contact" class="btn">Support</a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<% title "Domains" %>
+<% content_for :head do %>
+	<script>
+		$(document).ready(function(){
+			$(".domaintip").tooltip();
+			$(".ipaddress").focus(function(){
+				$(".instances-dropdown").show();
+				$(".invalidip").text("");
+			}).focusout(function(){
+						window.setTimeout(function(){$(".instances-dropdown").hide();},200);
+					});
+			$(".domain").focus(function(){$(".invaliddomain").text("");});
+			$(".wrapres").click(function(){
+				$(".ipaddress").val($(this).children().attr('value'));
+			});
+			$(".add-domain-submit").click(function(e){
+				if(($(".domain").val()).length == 0){
+					$(".invaliddomain").text("Invalid Domain");
+					e.preventDefault();
+				}
+				//var ipRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/;
+				var ipRegex = /((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])/
+				var ipVal = $(".ipaddress").val();
+				if(!ipRegex.test(ipVal) || ipVal.length <= 0){
+					$(".invalidip").text("Invalid IP Address");
+					return false;
+				}
+			});
+		});
+	</script>
+	<style>
+		.invaliddomain,.invalidip{
+			font-family: 'quicksandlight';
+			font-size:1.4em;
+			text-align: left;
+		}
+		.modal-title,.modal-body p{
+			text-align: center;
+			font-family: 'quicksandbold'
+		}
+		.cancel.btn-default,.destroy.btn{
+  		width: 100% !important;
+			background-color:white;
+  	}
+		.destroy.btn-primary{
+		  color: red !important;
+		  outline: 1px solid red !important;
+		}
+		.destroy.btn-primary:focus,.destroy.btn-primary:hover{
+		  background-color: red !important;
+		  color: white !important;
+			border-color:red !important;
+		}
+		.commit.destroy.btn-primary{
+		  margin-left: 0 !important;
+		  margin-top: 5px;
+		  border: 1px red solid;
+		}
+	</style>
+<% end %>
+<div class="container feature-box" style="text-align:left;">
+	<h1 class="domain-title">Domains</h1>
+	<div class = "new-domain">
+		<h3>Add a Domain</h3>
+		<div class="info">
+			The specified IP address will be assigned as an A record (for @) for your domain. You can change this later.<span type="button" class="fa fa-question-circle-o domaintip" data-toggle="tooltip" data-placement="top" title="An @ record is the record for the root domain. For example,if you enter domain as 'example.com' and '1.2.3.4' as IP address, then 'http://example.com' will point to '1.2.3.4'"></span>
+		</div>
+		<div class="add-domain row">
+			<%= simple_form_for(@newdomain,:url => domains_path,:method => :post,defaults: {label: false,error_html: { class: 'rederror'}},html: { class: "col-md-12"}) do |f| %>
+				<%= f.input_field :name,placeholder: "Domain Name",required:true,:class => "domain" %>
+				<div class="instances-list dropdown" style="display:inline-block;">
+					<%= f.input_field :ip_address,placeholder: "IP Address",required: true,:class => 'ipaddress'%>
+					<div class="instances-dropdown dropdown-menu">
+						<% if @instances.blank? %>
+							<div class="result noinst">No Instance Found</div>
+						<% else %>
+							<% Array(@instances).each do |instance| %>
+								<div class="wrapres"><div style="cursor:pointer;" class="result inst inst_<%=instance.id%>" value="<%=instance.ip_address%>"><%=instance.name.capitalize%> - <%=instance.ip_address%></div></div>
+							<% end %>
+						<% end %>
+	  			</div>
+				</div>
+				<%= f.button :submit, "Add Domain",:class => "bluebutton add-domain-submit" %>
+			<% end %>
+		</div>
+		<div class="errors row">
+				<div class="rederror col-md-5 invaliddomain"></div>
+				<div class="rederror col-md-5 invalidip"></div>
+				<div class="col-md-2"></div>
+		</div>
+	</div>
+	<% if @domains.blank? %>
+		<h2 class="no-domains"> You haven't added any domains yet! </h2>
+	<% else %>
+		<div class="domains">
+			<h3>Current Domains</h3>
+			<div class="domain-list">
+				<% Array(@domains).each do |domain| %>
+					<div class="domain-record">
+						<div class="domain-name"><%= domain.name %></div>
+						<div class="domain-button" style="padding-right:0 !important;"><%= link_to "Delete",delete_domain_path(:domainname => domain.name),method: :delete,:class => "delete-domain",title: "Delete this Domain?",data: {:confirm => "This Action is irreversible<br/>All Records Associated with this domain will be deleted too.<br/>Be Certain!"}%></div>
+						<div class="domain-button"><%= link_to "Manage",view_domain_path(:domainname=> domain.name),:class => "view-records"%></div>
+					</div>
+				<% end %>
+			</div>
+	<% end %>
+</div>

@@ -1,0 +1,295 @@
+<% title "Records" %>
+<% content_for :head do %>
+  <style>
+    .add-record{
+      margin-top:25px;
+    }
+    .add-record h3{
+      margin-top:40px;
+      font-family: 'quicksandregular';
+      font-weight: bolder;
+    }
+    input:not([type=submit]){
+      color: #666;
+    }
+    .update-record input,.update-record .delete-record-button,.update-record .record-type{
+      margin:10px !important;
+      padding: 0.5em !important;
+      font-size: 1.2em !important;
+    }
+    .update-record .record + .tooltip .tooltip-inner{
+      padding:10px 15px;
+      font-size:1.2em;
+      background-color: rgba(52,52,52, 0.95);
+    }
+    .record:not(:first-child) > .row{
+      margin-top: 20px;
+    }
+  </style>
+  <script>
+    function notifyIfBlank(e){
+      if(inputVal.length <= 0){
+        $.notify({
+          message: "Invalid Value For " + errName
+        });
+        e.preventDefault();
+        return true;
+      }
+      return false;
+    }
+    function rangeCheck(e,errName,inputObj,minVal,maxVal){
+      val = $(inputObj).val();
+      if(val < minVal || val > maxVal)  {
+        $.notify({
+          message: errName + ' must be a number between ' + minVal + ' and ' + maxVal
+        });
+        e.preventDefault();
+      }
+    }
+    function ipValidator(e,errName,inputObj,ipRegex){
+      var ipVal = $(inputObj).val();
+      if(!ipRegex.test(ipVal)){
+        $.notify({icon:"fa fa-2x fa-exclamation-cirlce",message: "Invalid " + errName});
+        e.preventDefault();
+      }
+    }
+    $(document).ready(function(){
+      $.notifyDefaults({
+        type: "danger"
+      });
+      $(".update-record input[type=text],.update-record input[type=number]").each(function(){
+        toolTipTitle = $(this).attr('placeholder');
+        $(this).tooltip({'trigger':'focus','title': toolTipTitle });
+      });
+      $(document.body).on("click","input[type='submit']",function(e){
+        inputsVal = $(this).closest("form").find("input[type=text],input[type=number]");
+        $.each(inputsVal,function(){
+          inputVal = $(this).val();
+          if ($(this).hasClass("name")){
+            errName = "Name";
+            if(notifyIfBlank(e)){
+              return true;
+            }
+          }
+          else{
+            //check if val has data
+            var entRegex = /^Enter/;
+            var extRegex = /^\w+\s(.+)$/;
+            var placeholderVal = $(this).attr('placeholder');
+            if(entRegex.test(placeholderVal)){
+              var match = placeholderVal.match(extRegex);
+              errName = match[1];
+            }
+            else{
+              errName = placeholderVal;
+            }
+            if(notifyIfBlank(e)){
+              return true;
+            }
+          }
+          if(errName == "Port")
+            rangeCheck(e,errName,this,1,65535);
+          else if(errName == "Priority" || errName == "Weight")
+            rangeCheck(e,errName,this,0,65535);
+          else if(errName == "Hostname" || errName == "Points to"){
+            var dotRegex = /\.$/;
+            if((!dotRegex.test($(this).val())) && $(this).val() != '@'){
+              $.notify({message: errName + " needs to end with a '.'(dot)."});
+              e.preventDefault();
+            }
+          }
+          else if(errName == "IP Address"){
+            var ipv4Regex = /((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])/;
+            ipValidator(e,errName,this,ipv4Regex)
+          }
+          else if(errName == "IPv6 Address"){
+            var ipv6Regex = /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/;
+            ipValidator(e,errName,this,ipv6Regex);
+          }
+          else if($(this).hasClass("srv-name")){
+            var srvNameRegex = /^\_.+\.\_.+/;
+            if(!srvNameRegex.test($(this).val())){
+              $.notify({message: "Record name must be in the format of _service._protocol.domain.com"});
+              e.preventDefault();
+            }
+          }
+        });
+
+
+      });
+      $('.update-record input').on('keydown',function(){
+        $(this).closest("form").find(".update-record-button").removeClass("inactive");
+      });
+      $('.delete-record-button').click(function(){
+        $('.delete-record-button').one('click',function(e) {
+          $.notify({message: 'Hang on a second '});
+          return false;
+        });
+      });
+      content = $(".detached").remove();
+      $(".new-record-types").append(content.find(".a-record"));
+      $("input[name='record[record_type]']").click(function(){
+        $("label.record-type.new").removeClass("active");
+        $(this).parent().addClass("active");
+        $(content).append($(".new-record-type").remove());
+        $(".new-record-types").html(content.find("." + $(this).parent().attr('id')));
+      });
+    });
+  </script>
+<% end %>
+<div class="container feature-box" style="text-align: left;">
+  <h1 class="domain-title"><%= @domain.name %></h1>
+  <div class = "new-record">
+		<h2>Add a Record</h2>
+    <div class="add-record">
+      <h3>Select Record Type</h3>
+      <div class="new-record-form">
+        <%= simple_form_for(@newrecord,url: add_record_path,method: :post,defaults: {label: false,error_html: { class: 'rederror'}},html:{class: "new-record-form"}) do |f| %>
+        <div class="record-types">
+          <div class="row">
+            <div class="col-md-2" data-toggle="">
+              <label class="record-type new a active" id="a-record">
+                <%= f.radio_button :record_type, 'A',checked: true%>
+                A
+              </label>
+            </div>
+            <div class="col-md-2">
+              <label class="record-type new aaaa" id="aaaa-record">
+                <%= f.radio_button :record_type, 'AAAA'%>
+                AAAA
+              </label>
+            </div>
+            <div class="col-md-2">
+              <label class="record-type new cname" id="cname-record">
+                <%= f.radio_button :record_type, 'CNAME'%>
+                CNAME
+              </label>
+            </div>
+            <div class="col-md-2">
+              <label class="record-type new mx" id="mx-record">
+                <%= f.radio_button :record_type, 'MX'%>
+                MX
+              </label>
+            </div>
+            <div class="col-md-2">
+              <label class="record-type new srv" id="srv-record">
+                <%= f.radio_button :record_type, 'SRV'%>
+                SRV
+              </label>
+            </div>
+            <div class="col-md-2">
+              <label class="record-type new txt" id="txt-record">
+                <%= f.radio_button :record_type, 'TXT'%>
+                TXT
+              </label>
+            </div>
+          </div>
+        </div>
+          <div class="row new-record-types">
+            <div class="detached">
+              <div class="new-record-type a-record">
+                <div class="col-md-4">
+                  <%= f.input_field :name,placeholder: "Enter Name",class: "record name"%>
+                </div>
+                <div class="col-md-4">
+                  <%= f.input_field :data,placeholder: "IP Address",class: "record data"%>
+                </div>
+                <div class="col-md-4">
+                  <%= f.button :submit, "Create A Record",class: "add-record-button"%>
+                </div>
+              </div>
+              <div class="new-record-type aaaa-record">
+                <div class="col-md-4">
+                  <%= f.input_field :name,placeholder: "Enter Name",class: "record name"%>
+                </div>
+                <div class="col-md-4">
+                  <%= f.input_field :data,placeholder: "IPv6 Address",class: "record data"%>
+                </div>
+                <div class="col-md-4">
+                  <%= f.button :submit, "Create AAAA Record",class: "add-record-button"%>
+                </div>
+              </div>
+              <div class="new-record-type cname-record">
+                <div class="col-md-4">
+                  <%= f.input_field :name,placeholder: "Enter Name",class: "record name"%>
+                </div>
+                <div class="col-md-4">
+                  <%= f.input_field :data,placeholder: "Points to",class: "record data"%>
+                </div>
+                <div class="col-md-4">
+                  <%= f.button :submit, "Create CNAME Record",class: "add-record-button"%>
+                </div>
+              </div>
+              <div class="new-record-type mx-record">
+                <div class="col-md-4">
+                  <%= f.input_field :data,placeholder: "Enter Hostname",class: "record data"%>
+                </div>
+                <div class="col-md-4">
+                  <%= f.input_field :priority,placeholder: "Enter Priority",class: "record priority"%>
+                </div>
+                <div class="col-md-4">
+                  <%= f.button :submit, "Create MX Record",class: "add-record-button mx-button"%>
+                </div>
+              </div>
+              <div class="new-record-type txt-record">
+                <div class="col-md-4">
+                  <%= f.input_field :name,placeholder: "Enter Name",class: "record name"%>
+                </div>
+                <div class="col-md-4">
+                  <%= f.input_field :data,placeholder: "Enter Text",class: "record data"%>
+                </div>
+                <div class="col-md-4">
+                  <%= f.button :submit, "Create TXT Record",class: "add-record-button"%>
+                </div>
+              </div>
+              <div class="new-record-type srv-record">
+                <div class="col-md-12">
+                  <div class="row">
+                  <div class="col-md-4">
+                    <%= f.input_field :name,placeholder: "Enter Name",class: "record name srv-name"%>
+                  </div>
+                  <div class="col-md-4">
+                    <%= f.input_field :data,placeholder: "Enter Hostname",class: "record data"%>
+                  </div>
+                  <div class="col-md-4">
+                    <%= f.input_field :priority,placeholder: "Enter Priority",class: "record priority"%>
+                  </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <%= f.input_field :port,placeholder: "Enter Port",class: "record port"%>
+                    </div>
+                    <div class="col-md-4">
+                      <%= f.input_field :weight,placeholder: "Enter Weight",class: "record weight"%>
+                    </div>
+                    <div class="col-md-4">
+                      <%= f.button :submit, "Create SRV Record",class: "add-record-button srv-button"%>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+	</div>
+  <% if @records.first.nil? %>
+    <h2 class="no-records">This domain has no records !</h2>
+  <% else %>
+  <div class="records">
+    <h2>Current Records</h2>
+    <div class="record-list">
+      <% @records.each do |record| %>
+        <% if !record.nil? %>
+          <div class="record">
+            <div class="row">
+              <%= render partial: "records/shared/#{record.record_type.downcase}",locals: {record: record} %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <% end %>
+</div>

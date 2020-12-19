@@ -1,0 +1,130 @@
+<% title "Support" %>
+<%= content_for :head do %>]
+  <script>
+    $(document).ready(function(){
+      $(".ticket#<%=params[:ticketid]%>").addClass("current");
+      $(".nav-ticket.<%=params[:status]%>tickets").addClass("current");
+    });
+  </script>
+<% end %>
+<div class="container" style="margin-top:40px;">
+  <h1 style="font-weight: 900;">Support Tickets</h1>
+  <div class="row support-nav-row">
+    <div class="col-md-12">
+      <ul class="nav nav-pills support-nav">
+        <li class="nav-item nav-ticket opentickets">
+          <a class="nav-link btn" href="/support/tickets/open">Open Tickets</a>
+        </li>
+        <li class="nav-item nav-ticket closedtickets">
+          <a class="nav-link btn" href="/support/tickets/closed">Closed Tickets</a>
+        </li>
+        <% if params[:ticketid] == "newticket" %>
+          <li class="nav-item createticket disabled">
+            <a class="nav-link btn createticket disabled" href="/support/ticket/newticket">Create Ticket</a>
+          </li>
+        <% else %>
+          <li class="nav-item createticket">
+            <a class="nav-link btn createticket " href="/support/ticket/newticket">Create Ticket</a>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <div class="row support-split">
+    <div class="col-md-3">
+      <% if @tickets.nil? %>
+        <div class="notickets feature-box">
+          You don't have any <%=params[:status].capitalize %> tickets
+        </div>
+      <% else %>
+        <div class="tickets">
+          <% Array(@tickets).each do |ticket| %>
+            <a id="<%=ticket.id%>" class="ticket" href="/support/ticket/<%=ticket.id%>">
+              <div class="row">
+                <div class="col-md-12">
+                  <span class="username">
+                    <%= ticket.last_reply_from %>
+                  </span>
+                  <span class="date"><%=time_ago_in_words(ticket.updated_at).gsub('about','') %> ago </span>
+                </div>
+              </div>
+              <div class="title">
+                <span><%= ticket.title %></span>
+              </div>
+            </a>
+            <div class="buttonborder"></div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-md-1"></div>
+    <div class="col-md-8">
+      <% if !@ticket.nil? %>
+        <% if @ticket.status=="closed" %>
+          <div class="closed-ticket">
+            This ticket is closed,to open this ticket simply click the reply button below.
+          </div>
+        <% end %>
+        <div class="ticket-body dont-break-out">
+          <div class="message-info row">
+            <div class="col-md-12">
+              <span class="message-user username">
+                <%= current_user.username %>
+              </span>
+              <span class="message-date date">
+                Created <%= time_ago_in_words(@ticket.created_at) %> ago
+              </span>
+            </div>
+          </div>
+          <h2 class="message-title"><%= @ticket.title %></h2>
+          <div class="messages">
+            <div class="message-message">
+              <%= simple_format(@ticket.message) %>
+            </div>
+            <% if !@replies.first.nil? %>
+              <% Array(@replies).each do |reply| %>
+                <div class="reply">
+                  <div class="message-info reply-info row">
+                    <div class="col-md-12">
+                      <span class="message-user grey username">Reply from <%= reply.from %></span>
+                      <span class="message-date date"><%= time_ago_in_words(reply.created_at).gsub('about','') %> ago </span>
+                    </div>
+                  </div>
+                  <div class="message-message reply-message">
+                    <%= simple_format(reply.reply) %>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+        <div class="new-reply">
+          <h4 class="reply-heading">Reply</h4>
+          <%= simple_form_for(@newreply,url: "/support/ticket/#{params[:ticketid]}",method: :put,defaults: {label: false,error_html: { class: 'rederror'}}) do |f| %>
+            <%= f.input :reply,placeholder: "Describe the problem you need assistance with in detail.",required: true %>
+            <div class="row reply-submit">
+              <div class="col-md-12">
+                <% if @ticket.status == "open" %>
+                  <%= f.button :submit,class: "btn reply-submit-button createreply",name: "status",value:"Submit Reply"%>
+                  <%= f.button :submit,class: "btn reply-submit-button closeticket",name: "status",value: "Close Ticket"%>
+                <% else %>
+                  <%= f.button :submit,class: "btn reply-submit-button createreply",name: "status",value:"Submit Reply and Open Ticket"%>
+                <% end %>
+              </div>
+          </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="newticket">
+          <h3>Create New Support Ticket</h3>
+          <%= simple_form_for(@newticket,:url => "/support/tickets/create",method: :post, defaults: {label: false,error_html: { class: 'rederror'}}) do |f| %>
+              <%= f.input :title,placeholder: "Subject",required:true %>
+              <%= f.input :message,placeholder: "Describe the problem you need assistance with in detail.",required: true %>
+              <%= f.button :submit, "Create Ticket",class: "bluebutton",style: "border-radius: 3px !important"%>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+<div style="margin-bottom:200px;"/>

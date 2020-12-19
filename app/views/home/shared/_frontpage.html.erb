@@ -1,0 +1,63 @@
+<% content_for :head do %>
+	<script>
+	var who = ["Bloggers.","Designers.","Simple Deployments.","You."];
+	var group = ["bloggers","designers","deploy","you"];
+	var timeout = 0;
+	var parentTimeout,loadImageTimeout,lastAnimateTimeout;
+	$(document).ready(function(){
+		$(who).each(function(index){
+			parentTimeout = setTimeout(function(){
+				$(".for,.theme-img").removeClass("fadeIn").addClass("fadeOut");
+				loadImageTimeout = setTimeout(function(){
+					$(".for").text(who[index]);
+					var newImg = new Image();
+					newImg.onload = function(){
+				  	document.getElementById("theme-img").setAttribute('src', this.src);
+							$(".for,.theme-img").removeClass("fadeOut").addClass("fadeIn");
+							if(group[index] == "you"){
+								lastAnimateTimeout = setTimeout(function(){
+									$(".for").removeClass("animated fadeIn").addClass("animated flash").css("animation-iteration-count",'2');
+								},1000)
+							}
+					};
+					newImg.src = $(".preload."+group[index]).attr('src');
+				},1000);
+			},3000+timeout);
+			timeout = timeout+4000;
+		});
+	});
+	$(document).on("page:before-change",function(){
+		clearTimeout(parentTimeout);
+		clearTimeout(loadImageTimeout);
+		clearTimeout(lastAnimateTimeout);
+	});
+	</script>
+<% end %>
+<img class="preload bloggers hidden" src="<%=image_path('front/bloggers.png')%>">
+<img class="preload designers hidden" src="<%=image_path('front/designers.png')%>">
+<img class="preload deploy hidden" src="<%=image_path('front/deploy.png')%>">
+<img class="preload you hidden" src="<%=image_path('front/you.png')%>">
+
+<div class="text-header developers">
+		<img id="theme-img" class="theme-img animated" src="<%=image_path('front/developers.png')%>">
+		<div class="dynamic-text">
+			<span>Powerful Cloud Hosting for <br><span class="for animated">Developers.</span></span>
+		</div>
+</div>
+<div class="wrapper">
+	<div class="muhcontainer">
+		<div class="row feature-box">
+			<div class="free-plan">
+				<h1>Try us for Free</h1>
+				<img src="<%= image_path('onemonthfreeserver.png')%>" alt="One Month Free Server" width="128px" style="margin-bottom:20px;"> 
+				<p>Get a 512MB Server for 1 Month</p>
+				<p>Aboslutely Free</p>
+				<p>No Payment Required</p>
+
+			 	<a href="/register" class="btn btn-primary custom-primary-button">
+			 		Sign Me Up
+			 	</a> 
+			</div>
+		</div>
+	</div>
+</div>
